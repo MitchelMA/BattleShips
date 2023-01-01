@@ -1,6 +1,8 @@
-﻿namespace BattleShipConsole;
+﻿using BattleShipConsole.Interfaces;
 
-public class Cursor
+namespace BattleShipConsole;
+
+public class Cursor : ICursor
 {
     private int _x = 0;
     private int _y = 0;
@@ -11,41 +13,13 @@ public class Cursor
     public int X
     {
         get => _x;
-        set
-        {
-            int val = value;
-            while (val > XLimit)
-            {
-                val -= XLimit;
-            }
-
-            while (val < 0)
-            {
-                val += XLimit;
-            }
-
-            _x = val;
-        }
+        set => SetX(value);
     }
 
     public int Y
     {
         get => _y;
-        set
-        {
-            int val = value;
-            while (val > YLimit)
-            {
-                val -= YLimit;
-            }
-
-            while (val < 0)
-            {
-                val += YLimit;
-            }
-
-            _y = val;
-        }
+        set => SetY(value);
     }
 
     public Cursor(int xLimit = 10, int yLimit = 10)
@@ -53,4 +27,33 @@ public class Cursor
         XLimit = xLimit;
         YLimit = yLimit;
     }
+
+    public int GetX() => _x;
+    public int GetY() => _y;
+
+    public int SetX(int val)
+    {
+        while (val > XLimit)
+            val -= XLimit;
+
+        while (val < 0)
+            val += XLimit;
+
+        _x = val;
+        return _x;
+    }
+    public int SetY(int val)
+    {
+        while (val > YLimit)
+            val -= YLimit;
+
+        while (val < 0)
+            val += YLimit;
+
+        _y = val;
+        return _y;
+    }
+
+    public int GetLimitX() => XLimit;
+    public int GetLimitY() => YLimit;
 }
