@@ -4,8 +4,8 @@ namespace BattleShipConsole;
 
 public class Cursor : ICursor
 {
-    private int _x = 0;
-    private int _y = 0;
+    private int _x;
+    private int _y;
 
     public readonly int XLimit;
     public readonly int YLimit;
@@ -33,7 +33,7 @@ public class Cursor : ICursor
 
     public int SetX(int val)
     {
-        while (val > XLimit)
+        while (val >= XLimit)
             val -= XLimit;
 
         while (val < 0)
@@ -44,7 +44,7 @@ public class Cursor : ICursor
     }
     public int SetY(int val)
     {
-        while (val > YLimit)
+        while (val >= YLimit)
             val -= YLimit;
 
         while (val < 0)

@@ -18,7 +18,6 @@ public class DisplayField : IField
         _width = width;
         _height = height;
     }
-    
 
     public void Display()
     {

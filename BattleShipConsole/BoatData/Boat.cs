@@ -7,12 +7,11 @@ namespace BattleShipConsole.BoatData;
 public class Boat
 {
    public readonly int Length;
-   public readonly Vector2 Cords;
+   public Vector2 Cords { get; protected set; }
    
    public readonly BoatPart[] Parts;
    public readonly IField Field;
-   public Facing Direction { get; private set; } = Facing.North;
-   
+   public Facing Direction { get; protected set; } = Facing.North;
 
    public Boat(IField field, int length, int x, int y)
    {

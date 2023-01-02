@@ -39,7 +39,7 @@ public class PlayField : IField, IInput
         InputState = InputState.NotStarted;
     }
     
-    public void HandleInput()
+    private void HandleInput()
     {
         throw new NotImplementedException();
     }

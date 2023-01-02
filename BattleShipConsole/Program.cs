@@ -48,7 +48,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        StartField field = new StartField(new() {4}, 10, 10);
+        StartField field = new StartField(new() {4, 8, 2}, 20, 10);
         field.Display();
     }
 }
