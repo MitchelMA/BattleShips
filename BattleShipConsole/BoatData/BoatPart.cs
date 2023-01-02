@@ -1,4 +1,5 @@
-﻿using BattleShipConsole.Enums;
+﻿using System.Numerics;
+using BattleShipConsole.Enums;
 
 namespace BattleShipConsole.BoatData;
 
@@ -7,8 +8,7 @@ public class BoatPart
     public readonly Boat From;
     public readonly int Idx;
 
-    public int X;
-    public int Y;
+    public Vector2 Cords { get; private set; } = new(0, 0);
     public readonly bool IsHead;
 
     public BoatPart(Boat from, int idx)
@@ -21,36 +21,15 @@ public class BoatPart
 
     public bool SetPosition()
     {
-        switch (From.Direction)
+        Cords = From.Direction switch
         {
-            case Facing.North:
-            {
-                X = From.X;
-                Y = From.Y + Idx;
-            }
-                break;
-            case Facing.East:
-            {
-                X = From.X - Idx;
-                Y = From.Y;
-            }
-                break;
-            case Facing.South:
-            {
-                X = From.X;
-                Y = From.Y - Idx;
-            }
-                break;
-            case Facing.West:
-            {
-                X = From.X + Idx;
-                Y = From.Y;
-            }
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            Facing.North => From.Cords with {Y = From.Cords.Y + Idx},
+            Facing.East => From.Cords with {X = From.Cords.X - Idx},
+            Facing.South => From.Cords with {Y = From.Cords.Y - Idx},
+            Facing.West => From.Cords with {X = From.Cords.X + Idx},
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
-        return X >= 0 && X < From.Field.GetWidth() && Y >= 0 && Y < From.Field.GetHeight();
+        return Cords.X >= 0 && Cords.X < From.Field.GetWidth() && Cords.Y >= 0 && Cords.Y < From.Field.GetHeight();
     }
 }
