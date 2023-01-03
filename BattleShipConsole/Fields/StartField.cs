@@ -116,6 +116,8 @@ public class StartField : IField, IInput<SelectType>
             HandleInput();
             Console.SetCursorPosition(startPos.Left, startPos.Top);
         }
+        
+        FlushInput();
 
         return ((Cursor.GetX(), Cursor.GetY()), _lastSelect);
     }
@@ -176,6 +178,12 @@ public class StartField : IField, IInput<SelectType>
         }
     }
 
+    private void FlushInput()
+    {
+        while (Console.KeyAvailable)
+            Console.ReadKey(true);
+    }
+    
     public void PlaceCurrent()
     {
         int oldIdx = _currentBoatIdx;
