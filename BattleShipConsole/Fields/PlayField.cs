@@ -3,7 +3,7 @@ using BattleShipConsole.Interfaces;
 
 namespace BattleShipConsole.Fields;
 
-public class PlayField : IField, IInput
+public class PlayField : IField, IInput<SelectType>
 {
     public int Width { get; }
     public int Height { get; }
@@ -29,14 +29,14 @@ public class PlayField : IField, IInput
     }
 
 
-    public (int xInput, int yInput) GetInput()
+    public ((int xInput, int yInput), SelectType selectType) GetInput()
     {
         throw new NotImplementedException();
     }
 
     public void ResetInput()
     {
-        InputState = InputState.NotStarted;
+        InputState = InputState.Initialized;
     }
     
     private void HandleInput()

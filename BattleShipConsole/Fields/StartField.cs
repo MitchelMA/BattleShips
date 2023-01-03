@@ -5,17 +5,18 @@ using System.Numerics;
 
 namespace BattleShipConsole.Fields;
 
-public class StartField : IField, IInput
+public class StartField : IField, IInput<SelectType>
 {
     private readonly List<int> _boatSizes;
     private int _currentBoatIdx = 0;
     private PlaceableBoat? _currentBoat;
-    private List<Boat> _placed = new();
+    private readonly List<Boat> _placed = new();
+    private SelectType _lastSelect = SelectType.NoObject;
 
     public int Width { get; }
     public int Height { get; }
     public ICursor Cursor => CurrentBoat;
-    public InputState InputState { get; private set; }
+    public InputState InputState { get; private set; } = InputState.Initialized;
     public List<int> BoatSizes => new(_boatSizes);
 
     public PlaceableBoat CurrentBoat
@@ -80,8 +81,14 @@ public class StartField : IField, IInput
 
                 bool hasPart = CurrentBoat.Parts.Any(part => walkCords == part.Cords) ||
                                _placed.Any(boat => boat.Parts.Any(part => walkCords == part.Cords));
+
+                bool isOverlapping = CurrentBoat.Parts.Any(part => walkCords == part.Cords) &&
+                                     _placed.Any(boat => boat.Parts.Any(part => walkCords == part.Cords));
+
                 string addition = walkCords == cursorCords ? "[" : " ";
+                _ = isOverlapping ? addition += "\u001b[31m" : "";
                 addition += hasPart ? '#' : '.';
+                _ = isOverlapping ? addition += "\u001b[m" : "";
                 addition += walkCords == cursorCords ? "]" : " ";
                 buffer += addition;
             }
@@ -94,52 +101,100 @@ public class StartField : IField, IInput
 
     public void Display()
     {
-        CurrentBoat.SetX(19);
-        CurrentBoat.Rotate(Facing.East);
-        Console.WriteLine($"Selected idx: {_currentBoatIdx}");
-        Console.WriteLine(ToString());
-        PlaceCurrent();
-        // CurrentBoatIdx++;
-        Console.WriteLine($"Selected idx: {_currentBoatIdx}");
-        CurrentBoat.SetX(8);
-        Console.WriteLine(ToString());
-        PlaceCurrent();
-        // CurrentBoatIdx++;
-        Console.WriteLine($"Selected idx: {_currentBoatIdx}");
-        CurrentBoat.SetY(1);
-        CurrentBoat.SetX(0);
-        
-        Console.WriteLine(CurrentBoat.Cords);
-        Console.WriteLine(CurrentBoat.GetLimitY());
-        Console.WriteLine(CurrentBoat.GetLimitX());
         Console.WriteLine(ToString());
     }
 
-    public (int xInput, int yInput) GetInput()
+    public ((int xInput, int yInput), SelectType selectType) GetInput()
     {
-        throw new NotImplementedException();
+        InputState = InputState.Running;
+
+        var startPos = Console.GetCursorPosition();
+
+        while (InputState == InputState.Running)
+        {
+            Display();
+            HandleInput();
+            Console.SetCursorPosition(startPos.Left, startPos.Top);
+        }
+
+        return ((Cursor.GetX(), Cursor.GetY()), _lastSelect);
     }
 
     private void HandleInput()
     {
-        throw new NotImplementedException();
+        ConsoleKey input = Console.ReadKey(true).Key;
+        switch (input)
+        {
+            case ConsoleKey.UpArrow:
+            {
+                Cursor.SetY(Cursor.GetY() - 1);
+            }
+                break;
+            case ConsoleKey.RightArrow:
+            {
+                Cursor.SetX(Cursor.GetX() + 1);
+            }
+                break;
+            case ConsoleKey.DownArrow:
+            {
+                Cursor.SetY(Cursor.GetY() + 1);
+            }
+                break;
+            case ConsoleKey.LeftArrow:
+            {
+                Cursor.SetX(Cursor.GetX() - 1);
+            }
+                break;
+            case ConsoleKey.R:
+            {
+                int curRot = (int) CurrentBoat.Direction;
+                int nextRot = (curRot + 1) % 4;
+
+                CurrentBoat.Rotate((Facing) nextRot);
+            }
+                break;
+            case ConsoleKey.OemPeriod:
+            {
+                CurrentBoatIdx++;
+            }
+                break;
+            case ConsoleKey.OemComma:
+            {
+                CurrentBoatIdx--;
+            }
+                break;
+
+            case ConsoleKey.Enter:
+            {
+                InputState = InputState.Done;
+                _lastSelect = SelectType.Primary | SelectType.Object;
+            }
+                break;
+
+            default:
+                break;
+        }
     }
 
     public void PlaceCurrent()
     {
         int oldIdx = _currentBoatIdx;
         PlaceableBoat previousBoat = CurrentBoat;
-        
+
         _boatSizes.RemoveAt(oldIdx);
         int newIdx = _currentBoatIdx > _boatSizes.Count - 1 ? _boatSizes.Count - 1 : _currentBoatIdx;
         _currentBoatIdx = newIdx;
-        
+
         _placed.Add(CurrentBoat);
+
+        if (_currentBoatIdx < 0)
+            return;
+
         _currentBoat = new PlaceableBoat(this, _boatSizes[_currentBoatIdx], previousBoat.Cords);
     }
 
     public void ResetInput()
     {
-        InputState = InputState.NotStarted;
+        InputState = InputState.Initialized;
     }
 }
