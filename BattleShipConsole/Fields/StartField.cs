@@ -10,14 +10,14 @@ public class StartField : IField, IInput<SelectType>
     private readonly List<int> _boatSizes;
     private int _currentBoatIdx = 0;
     private PlaceableBoat? _currentBoat;
-    private readonly List<Boat> _placed = new();
+    private readonly List<Boat> _placed;
     private SelectType _lastSelect = SelectType.NoObject;
 
     public int Width { get; }
     public int Height { get; }
     public ICursor Cursor => CurrentBoat;
     public InputState InputState { get; private set; } = InputState.Initialized;
-    public List<int> BoatSizes => new(_boatSizes);
+    public IReadOnlyList<Boat> BoatSizes => _placed.AsReadOnly();
 
     public PlaceableBoat CurrentBoat
     {
