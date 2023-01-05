@@ -17,7 +17,7 @@ public class StartField : IField, IInput<SelectType>
     public int Height { get; }
     public ICursor Cursor => CurrentBoat;
     public InputState InputState { get; private set; } = InputState.Initialized;
-    public IReadOnlyList<Boat> BoatSizes => _placed.AsReadOnly();
+    public IReadOnlyList<int> BoatSizes => _boatSizes.AsReadOnly();
 
     public PlaceableBoat CurrentBoat
     {
