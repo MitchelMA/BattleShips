@@ -87,7 +87,7 @@ public class StartField : IField, IInput<SelectType>
 
                 string addition = walkCords == cursorCords ? "[" : " ";
                 _ = isOverlapping ? addition += "\u001b[31m" : "";
-                addition += hasPart ? '#' : '.';
+                addition += hasPart ? '#' : '·';
                 _ = isOverlapping ? addition += "\u001b[m" : "";
                 addition += walkCords == cursorCords ? "]" : " ";
                 buffer += addition;
