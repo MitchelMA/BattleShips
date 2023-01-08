@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using BattleShipConsole.Ansi;
 using BattleShipConsole.BoatData;
 using BattleShipConsole.Fields;
@@ -9,9 +10,11 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        Console.Title = "BattleShips";
+        // enable the ansi escape sequences
         AnsiHelper.EnableAnsi();
-
-        StartField field = new StartField(new() {4, 8, 2}, 20, 10);
+        // catch SIGINT to handle exiting the alternative buffer etc..
+        Console.CancelKeyPress += OnSigInt;
         
         // enter the alternative buffer for the game to be rendered into
         Console.Write(AnsiHelper.AnsiEnterAltBuffer);
@@ -22,6 +25,9 @@ public static class Program
         // set the color of the title
         Console.Write(AnsiHelper.SetForeColor(50, 50, 200));
         Console.WriteLine("Place your boats" + AnsiHelper.AnsiReset);
+        
+        // create a field
+        StartField field = new StartField(new() {4, 8, 2}, 20, 10);
         
         // loop of start field
         while (field.BoatSizes.Count > 0)
@@ -38,6 +44,14 @@ public static class Program
         // exit the alternative buffer
         Console.Write(AnsiHelper.AnsiExitAltBuffer);
         // thank the player for playing in the 'standard' terminal buffer
+        Console.WriteLine("Thanks for playing!");
+    }
+
+    private static void OnSigInt(object? sender, ConsoleCancelEventArgs e)
+    {
+        Console.Write(AnsiHelper.AnsiShowCursor);
+        Console.Write(AnsiHelper.AnsiReset);
+        Console.Write(AnsiHelper.AnsiExitAltBuffer);
         Console.WriteLine("Thanks for playing!");
     }
 }
