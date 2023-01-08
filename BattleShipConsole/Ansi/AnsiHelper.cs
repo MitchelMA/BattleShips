@@ -6,18 +6,32 @@ public static class AnsiHelper
 {
     #region Ansi Escape Codes
     // https://en.wikipedia.org/wiki/ANSI_escape_code
+    
+    /// Cursor Up (Moves the cursor up by `n`)
     public static string AnsiCuu(int n) => $"\x1b[{n}A";
+    /// Cursor Down (Moves the cursor down by `n`)
     public static string AnsiCud(int n) => $"\x1b[{n}B";
+    /// Cursor Forwards (Moves the cursor forward by `n`)
     public static string AnsiCuf(int n) => $"\x1b[{n}C";
+    /// Cursor Back (Moves the cursor back by `n`)
     public static string AnsiCub(int n) => $"\x1b[{n}D";
+    /// Cursor Next Line (Moves cursor to beginning of the line `n` lines down)
     public static string AnsiCnl(int n) => $"\x1b[{n}E";
+    /// Cursor Previous Line (Moves cursor to beginning of the line `n` lines up)
     public static string AnsiCpl(int n) => $"\x1b[{n}F";
+    /// Cursor Horizontal Absolute (Moves cursor to column `n`)
     public static string AnsiCha(int n) => $"\x1b[{n}G";
+    /// Cursor Position (Moves cursor row `n`; column `m`. Values are 1-based)
     public static string AnsiCup(int n, int m) => $"\x1b[{n};{m}H";
+    /// Erase in Display (0: clear from cursor to end; 1: cursor to beginning of screen; 2: entire screen)
     public static string AnsiEd(int n) => $"\x1b[{n}J";
+    /// Erase in Line (0: from cursor to end; 1: from cursor to beginning; 2: entire line)
     public static string AnsiEl(int n) => $"\x1b[{n}K";
+    /// Scroll Up (Scroll up by `n` lines)
     public static string AnsiSu(int n) => $"\x1b[{n}S";
+    /// Scroll Down (Scroll down by `n` lines)
     public static string AnsiSd(int n) => $"\x1b[{n}T";
+    /// Horizontal Vertical Position (Same as CUP, but counts as a format effector function)
     public static string AnsiHvp(int n, int m) => $"\x1b[{n};{m}f";
     
     public const string AnsiReset = "\x1b[0m";
