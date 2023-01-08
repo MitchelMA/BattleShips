@@ -12,17 +12,32 @@ public static class Program
         AnsiHelper.EnableAnsi();
 
         StartField field = new StartField(new() {4, 8, 2}, 20, 10);
-        // field.GetInput();
-        Console.Write(AnsiHelper.SetForeColor(50, 50, 200));
         
-        // for(int i = 0; i < 10; i++)
+        // enter the alternative buffer for the game to be rendered into
+        Console.Write(AnsiHelper.AnsiEnterAltBuffer);
+        // hide the cursor
+        Console.Write(AnsiHelper.AnsiHideCursor);
+        // set the cursor position to top-left corner
+        Console.Write(AnsiHelper.AnsiHvp(1, 1));
+        // set the color of the title
+        Console.Write(AnsiHelper.SetForeColor(50, 50, 200));
         Console.WriteLine("Place your boats" + AnsiHelper.AnsiReset);
+        
+        // loop of start field
         while (field.BoatSizes.Count > 0)
         {
             field.GetInput();
             field.PlaceCurrent();
             field.ResetInput();
         }
+        
+        // move the cursor down by the height of the field
         Console.Write(AnsiHelper.AnsiCnl(field.Height));
+        // show the cursor
+        Console.Write(AnsiHelper.AnsiShowCursor);
+        // exit the alternative buffer
+        Console.Write(AnsiHelper.AnsiExitAltBuffer);
+        // thank the player for playing in the 'standard' terminal buffer
+        Console.WriteLine("Thanks for playing!");
     }
 }

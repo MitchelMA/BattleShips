@@ -125,12 +125,16 @@ public class StartField : IField, IInput<SelectType>
             return ((Cursor.GetX(), Cursor.GetY()), _lastSelect);
         
         InputState = InputState.Running;
+        
+        // save the start cursor position
+        Console.Write(AnsiHelper.AnsiSaveCursorPos);
 
         while (InputState == InputState.Running)
         {
             Display();
             HandleInput();
-            Console.Write(AnsiHelper.AnsiCpl(Height));
+            // restore the start position
+            Console.Write(AnsiHelper.AnsiRestoreCursorPos);
         }
         
         FlushInput();

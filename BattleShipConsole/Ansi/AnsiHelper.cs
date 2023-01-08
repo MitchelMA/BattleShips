@@ -6,6 +6,23 @@ public static class AnsiHelper
 {
     #region Ansi Escape Codes
     // https://en.wikipedia.org/wiki/ANSI_escape_code
+
+    /// Starts all the escape sequences
+    public const string Esc = "\x1b";
+    /// Control Sequence Introducer
+    public const string Csi = "\x1b[";
+
+    public static string AnsiSetMaxLineLen(int n) => $"{Csi}{n}u";
+    public static string AnsiSetMaxLineNum(int n) => $"{Csi}{n}t";
+    public static string AnsiSetStartX(int n) => $"{Esc} [ {n} x";
+    public static string AnsiSetStartY(int n) => $"{Esc} [ {n} y";
+
+    public const string AnsiSaveCursorPos = $"{Csi}s";
+    public const string AnsiRestoreCursorPos = $"{Csi}u";
+    public const string AnsiShowCursor = $"{Csi}?25h";
+    public const string AnsiHideCursor = $"{Csi}?25l";
+    public const string AnsiEnterAltBuffer = $"{Csi}?1049h";
+    public const string AnsiExitAltBuffer = $"{Csi}?1049l";
     
     /// Cursor Up (Moves the cursor up by `n`)
     public static string AnsiCuu(int n) => $"\x1b[{n}A";
