@@ -11,7 +11,7 @@ public class Boat
    
    public readonly BoatPart[] Parts;
    public readonly IField Field;
-   public Facing Direction { get; protected set; } = Facing.North;
+   public Facing Direction { get; private set; } = Facing.North;
 
    public Boat(IField field, int length, int x, int y)
    {

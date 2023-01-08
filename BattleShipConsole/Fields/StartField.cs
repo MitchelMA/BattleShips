@@ -11,7 +11,7 @@ public class StartField : IField, IInput<SelectType>
     private readonly List<int> _boatSizes;
     private int _currentBoatIdx = 0;
     private PlaceableBoat? _currentBoat;
-    private readonly List<Boat> _placed;
+    private readonly List<Boat> _placed = new();
     private SelectType _lastSelect = SelectType.NoObject;
 
     public int Width { get; }
@@ -50,29 +50,27 @@ public class StartField : IField, IInput<SelectType>
         }
     }
 
+    // Checks if any part of CurrentBoat is at the same position of any previously placed boats
+    public bool IsOverlapping => CurrentBoat.Parts.Any(part =>
+        _placed.Any(boat => boat.Parts.Any(boatPart => boatPart.Cords == part.Cords)));
+
     public int GetWidth() => Width;
     public int GetHeight() => Height;
     public ICursor GetCursor() => Cursor;
     public InputState GetInputState() => InputState;
 
-    public List<Boat> Placed => new(_placed);
+    public IReadOnlyList<Boat> Placed => _placed.AsReadOnly();
 
     public StartField(List<int> boatSizes, int width, int height)
     {
         Width = width;
         Height = height;
         _boatSizes = boatSizes;
-
-        // TODO: remove this later it is just as a test
-        _placed = new List<Boat>()
-        {
-            new Boat(this, 2, 4, 0),
-        };
     }
 
     public override string ToString()
     {
-        string buffer = "";
+        string buffer = AnsiHelper.AnsiForeBlue;
         Vector2 cursorCords = CurrentBoat.Cords;
         for (int y = 0; y < Height; y++)
         {
@@ -86,17 +84,33 @@ public class StartField : IField, IInput<SelectType>
                 bool isOverlapping = CurrentBoat.Parts.Any(part => walkCords == part.Cords) &&
                                      _placed.Any(boat => boat.Parts.Any(part => walkCords == part.Cords));
 
-                string addition = walkCords == cursorCords ? "[" : " ";
-                _ = isOverlapping ? addition += AnsiHelper.AnsiForeRed : "";
-                addition += hasPart ? '#' : '·';
-                _ = isOverlapping ? addition += AnsiHelper.AnsiReset : "";
-                addition += walkCords == cursorCords ? "]" : " ";
+                string addition = walkCords == cursorCords ? AnsiHelper.AnsiDefaultFore + '[' : " ";
+                if (isOverlapping)
+                {
+                    addition += AnsiHelper.AnsiBForeRed;
+                }
+
+                if (hasPart)
+                {
+                    if (!isOverlapping)
+                        addition += AnsiHelper.AnsiDefaultFore;
+                    
+                    addition += '#' + AnsiHelper.AnsiDefaultFore;
+                }
+                else
+                {
+                    addition += '·';
+                }
+
+                addition += walkCords == cursorCords ? ']' : " ";
+                addition += AnsiHelper.AnsiForeBlue;
                 buffer += addition;
             }
 
             buffer += Environment.NewLine;
         }
 
+        buffer += AnsiHelper.AnsiReset;
         return buffer;
     }
 
@@ -107,9 +121,10 @@ public class StartField : IField, IInput<SelectType>
 
     public ((int xInput, int yInput), SelectType selectType) GetInput()
     {
+        if (InputState is InputState.Done)
+            return ((Cursor.GetX(), Cursor.GetY()), _lastSelect);
+        
         InputState = InputState.Running;
-
-        var startPos = Console.GetCursorPosition();
 
         while (InputState == InputState.Running)
         {
@@ -186,6 +201,9 @@ public class StartField : IField, IInput<SelectType>
     
     public void PlaceCurrent()
     {
+        if (IsOverlapping)
+            return;
+        
         int oldIdx = _currentBoatIdx;
         PlaceableBoat previousBoat = CurrentBoat;
 
