@@ -2,6 +2,7 @@
 using BattleShipConsole.Enums;
 using BattleShipConsole.Interfaces;
 using System.Numerics;
+using BattleShipConsole.Ansi;
 
 namespace BattleShipConsole.Fields;
 
@@ -86,9 +87,9 @@ public class StartField : IField, IInput<SelectType>
                                      _placed.Any(boat => boat.Parts.Any(part => walkCords == part.Cords));
 
                 string addition = walkCords == cursorCords ? "[" : " ";
-                _ = isOverlapping ? addition += "\u001b[31m" : "";
+                _ = isOverlapping ? addition += AnsiHelper.AnsiForeRed : "";
                 addition += hasPart ? '#' : '·';
-                _ = isOverlapping ? addition += "\u001b[m" : "";
+                _ = isOverlapping ? addition += AnsiHelper.AnsiReset : "";
                 addition += walkCords == cursorCords ? "]" : " ";
                 buffer += addition;
             }
@@ -101,7 +102,7 @@ public class StartField : IField, IInput<SelectType>
 
     public void Display()
     {
-        Console.WriteLine(ToString());
+        Console.Write(ToString());
     }
 
     public ((int xInput, int yInput), SelectType selectType) GetInput()
@@ -114,11 +115,10 @@ public class StartField : IField, IInput<SelectType>
         {
             Display();
             HandleInput();
-            Console.SetCursorPosition(startPos.Left, startPos.Top);
+            Console.Write(AnsiHelper.AnsiCpl(Height));
         }
         
         FlushInput();
-
         return ((Cursor.GetX(), Cursor.GetY()), _lastSelect);
     }
 
