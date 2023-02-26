@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
 using BattleShipConsole.Enums;
 using BattleShipConsole.Interfaces;
 
@@ -25,15 +25,15 @@ public class PlaceableBoat : Boat, ICursor
         Y = y;
     }
 
-    public PlaceableBoat(IField field, int length, Vector2 cords) : base(field, length, cords)
+    public PlaceableBoat(IField field, int length, Point cords) : base(field, length, cords)
     {
         // setting the x and y again to make sure that the boat stays in bounds
-        X = (int) cords.X;
-        Y = (int) cords.Y;
+        X = cords.X;
+        Y = cords.Y;
     }
 
-    public int GetX() => (int) Cords.X;
-    public int GetY() => (int) Cords.Y;
+    public int GetX() => Cords.X;
+    public int GetY() => Cords.Y;
 
     public int SetX(int val)
     {

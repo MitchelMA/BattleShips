@@ -1,4 +1,5 @@
-﻿using BattleShipConsole.BoatData;
+﻿using System.Drawing;
+using BattleShipConsole.BoatData;
 using BattleShipConsole.Enums;
 using BattleShipConsole.Interfaces;
 using System.Numerics;
@@ -61,29 +62,33 @@ public class StartField : IField, IInput<SelectType>
 
     public IReadOnlyList<Boat> Placed => _placed.AsReadOnly();
 
-    public StartField(List<int> boatSizes, int width, int height)
+    public StartField(int[] boatSizes, int width, int height)
     {
         Width = width;
         Height = height;
-        _boatSizes = boatSizes;
+        _boatSizes = boatSizes.ToList();
     }
 
     public override string ToString()
     {
         string buffer = AnsiHelper.AnsiForeBlue;
-        Vector2 cursorCords = CurrentBoat.Cords;
+        Point cursorCords = CurrentBoat.Cords;
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)
             {
-                Vector2 walkCords = new Vector2(x, y);
+                Point walkCords = new Point(x, y);
 
+                // Check if this coordinate has a part
                 bool hasPart = CurrentBoat.Parts.Any(part => walkCords == part.Cords) ||
                                _placed.Any(boat => boat.Parts.Any(part => walkCords == part.Cords));
 
+                // When any parts of the current boat (the one being placed) overlaps with any part of an already
+                // placed boat -> true
                 bool isOverlapping = CurrentBoat.Parts.Any(part => walkCords == part.Cords) &&
                                      _placed.Any(boat => boat.Parts.Any(part => walkCords == part.Cords));
 
+                // "cursor open" when cursor coords and walk coords are equal
                 string addition = walkCords == cursorCords ? AnsiHelper.AnsiDefaultFore + '[' : " ";
                 if (isOverlapping)
                 {

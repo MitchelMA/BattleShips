@@ -1,13 +1,18 @@
 ﻿using System.Numerics;
 using BattleShipConsole.Enums;
 using BattleShipConsole.Interfaces;
+using System.Drawing;
 
 namespace BattleShipConsole.BoatData;
 
 public class Boat
 {
    public readonly int Length;
-   public Vector2 Cords { get; protected set; }
+   
+   /// <summary>
+   /// Coordinates of the head of the boat
+   /// </summary>
+   public Point Cords { get; protected set; }
    
    public readonly BoatPart[] Parts;
    public readonly IField Field;
@@ -16,14 +21,14 @@ public class Boat
    public Boat(IField field, int length, int x, int y)
    {
       Field = field;
-      Cords = new Vector2(x, y);
+      Cords = new Point(x, y);
       Length = length;
       Parts = new BoatPart[Length];
       for (int i = 0; i < Length; i++)
          Parts[i] = new BoatPart(this, i);
    }
 
-   public Boat(IField field, int length, Vector2 cords)
+   public Boat(IField field, int length, Point cords)
    {
       Field = field;
       Length = length;
@@ -41,7 +46,6 @@ public class Boat
       Direction = direction;
 
       bool successful = SetParts();
-      
 
       if (!successful)
          Direction = oldDir;

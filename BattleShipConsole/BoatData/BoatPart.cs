@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
 using BattleShipConsole.Enums;
 
 namespace BattleShipConsole.BoatData;
@@ -8,7 +9,7 @@ public class BoatPart
     public readonly Boat From;
     public readonly int Idx;
 
-    public Vector2 Cords { get; private set; } = new(0, 0);
+    public Point Cords { get; private set; } = new(0, 0);
     public readonly bool IsHead;
 
     public BoatPart(Boat from, int idx)
